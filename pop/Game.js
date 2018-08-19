@@ -3,6 +3,8 @@ import CanvasRenderer from './renderer/CanvasRenderer'
 
 const STEP = 1 / 60
 const MAX_FRAME = STEP * 5
+const MULTIPLIER = 1
+const SPEED = STEP * MULTIPLIER
 
 class Game {
   constructor(w, h, parent = "#board") {
@@ -10,7 +12,7 @@ class Game {
     this.h = h
     this.renderer = new CanvasRenderer(w, h)
     document.querySelector(parent).appendChild(this.renderer.view)
-    this.scene = new Container() 
+    this.scene = new Container()
   }
 
   run(gameUpdate = () => {}) {
@@ -20,14 +22,21 @@ class Game {
       requestAnimationFrame(loop)
 
       const t = ms / 1000 // Convert to seconds
-      dt = Math.min(t - last, MAX_FRAME)
+      dt += Math.min(t - last, MAX_FRAME)
       last = t
 
-      this.scene.update(dt, t)
-      gameUpdate(dt, t)
+      while (dt >= STEP) {
+        this.scene.update(STEP, t / MULTIPLIER)
+        gameUpdate(STEP, t / MULTIPLIER)
+        dt -= SPEED
+      }
       this.renderer.render(this.scene)
     }
-    requestAnimationFrame(loop)
+    const init = ms => {
+      last = ms / 1000
+      requestAnimationFrame(loop)
+    }
+    requestAnimationFrame(init)
   }
 }
 

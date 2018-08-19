@@ -15,6 +15,21 @@ export function addDebug(e) {
   return e
 }
 
+/**
+ * Get the direction for one entity to aim at another. 
+ * @param {*} a 
+ * @param {*} b
+ * @return object
+ */
+export function aim(a, b) {
+  const angle = math.angle(center(a), center(b))
+  return math.direction(angle)
+}
+
+export function angle(a, b) {
+  return math.angle(center(a), center(b))
+}
+
 export function bounds(entity) {
   const { w, h, pos, hitBox } = entity
   const hit = hitBox || { x: 0, y: 0, w, h }
@@ -32,6 +47,10 @@ export function center(entity) {
     x: pos.x + w / 2,
     y: pos.y + h / 2
   }
+}
+
+export function direction(angle) {
+  return math.direction(angle)
 }
 
 export function distance(a, b) {
@@ -64,8 +83,11 @@ export function hits(entity, container, hitCallback) {
 
 export default {
   addDebug,
+  aim,
+  angle,
   bounds,
   center,
+  direction,
   distance,
   hit,
   hits
