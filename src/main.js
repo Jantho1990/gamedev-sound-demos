@@ -1,6 +1,7 @@
 import pop from '../pop/index'
 const { Game } = pop
 import TennisBall from './entities/TennisBall'
+import Sound from '../pop/sound/Sound';
 
 const w = 800
 const h = 400
@@ -15,8 +16,7 @@ const balls = [
   return p
 })
 
-const plop = new Audio()
-plop.src = './res/sounds/plop.mp3'
+const plop = new Sound('res/sounds/plop.mp3')
 
 game.run(dt => {
   const [x1, x2] = balls.map(p => {
