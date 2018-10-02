@@ -1,21 +1,34 @@
-import pop from '../pop'
-const { Game, entity, math, Text } = pop
+import pop from '../pop/index'
+const { Game } = pop
+import TennisBall from './entities/TennisBall'
 
-const game = new Game(640, 480)
-const { scene, w, h, } = game
+const w = 800
+const h = 400
+const game = new Game(w, h)
 
-const style = {
-  fill: 'hsl(320, 20%, 20%)',
-  font: '40pt "Arial", monospace'
-}
+const balls = [
+  { x: 0, y: h / 2, dir: 1 },
+  { x: w, y: h / 2, dir: -1 }
+].map(d => {
+  const p = game.scene.add(new TennisBall(600 * d.dir))
+  p.pos.copy(d).add({ x: -p.rad, y: -p.rad })
+  return p
+})
 
-const demoText1 = new Text('Gamedev', style)
-demoText1.pos = { x: w / 4, y: 125 }
+const plop = new Audio()
+plop.src = './res/sounds/plop.mp3'
 
-const demoText2 = new Text('Boilerplate', style)
-demoText2.pos = { x: w / 3, y: 175 }
+game.run(dt => {
+  const [x1, x2] = balls.map(p => {
+    const { pos, vel } = p
+    pos.x += vel.x * dt
+    if (pos.x < -p.rad || pos.x > w - p.rad) {
+      vel.x *= -1
+    }
+    return pos.x
+  })
 
-scene.add(demoText1)
-scene.add(demoText2)
-
-game.run()
+  if (Math.abs(x1 - x2) < 5) {
+    plop.play()
+  }
+})
